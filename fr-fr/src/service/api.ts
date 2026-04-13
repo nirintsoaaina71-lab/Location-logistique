@@ -5,7 +5,19 @@ import { errorResponseSchema } from '../schemas/auth.schemas';
 import type { ErrorResponse } from '../schemas/auth.schemas';
 
 // Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const getApiUrl = () => {
+  const env = import.meta.env.MODE; // 'development', 'production', 'staging'
+  
+  switch (env) {
+    case 'production':
+      return import.meta.env.VITE_API_URL_PROD;
+    case 'staging':
+      return import.meta.env.VITE_API_URL_STAGING;
+    default:
+      return import.meta.env.VITE_API_URL_DEV;
+  }
+};
+const API_BASE_URL = getApiUrl() || '/api';
 
 // Créer l'instance Axios
 const api: AxiosInstance = axios.create({

@@ -64,8 +64,8 @@ export class AuthService {
       },
     });
 
-    // Envoi de l'email DOIT être dans un try/catch pour ne pas bloquer
-    // l'inscription si Resend échoue (ex: erreur de sandbox).
+    // Envoi de l'email dans un try/catch pour ne pas bloquer
+    // l'inscription si l'envoi via Nodemailer échoue.
     try {
       await this.mailerService.sendMail(email, name);
     } catch(err) {

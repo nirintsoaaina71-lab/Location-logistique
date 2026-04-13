@@ -1,0 +1,2 @@
+postgresql://postgres:[YOUR-PASSWORD]@db.pfzctyqlgvtenxfthopb.supabase.co:5432/postgres
+postgresql://postgres:[YOUR-PASSWORD]@db.bbvivckfxzgjkmhlsivh.supabase.co:5432/postgres

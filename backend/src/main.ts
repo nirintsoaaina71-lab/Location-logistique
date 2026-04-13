@@ -8,10 +8,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
   // 🔧 1. D'abord configurer CORS
-  app.enableCors({
-    origin: 'http://localhost:3000',
-    credentials: true,
-  });
+   app.enableCors({
+  origin: true,  // Accepte toutes les origines (⚠️ pas pour production)
+  credentials: true,
+});
   
   // 🔧 2. Ensuite les middlewares
   app.use(cookieParser());
