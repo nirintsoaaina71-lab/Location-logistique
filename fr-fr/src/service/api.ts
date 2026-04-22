@@ -18,6 +18,7 @@ import type { ErrorResponse } from '../schemas/auth.schemas';
 //   }
 // };
 
+// FORCE REDEPLOY - 22 AVRIL 2026 - 11H00
 const API_BASE_URL = 'https://location-logistique.onrender.com';
 
 console.log(`[API] Base URL définie à : ${API_BASE_URL}`);
