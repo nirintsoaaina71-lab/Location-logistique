@@ -6,33 +6,32 @@ import type { ErrorResponse } from '../schemas/auth.schemas';
 
 // Configuration
 const getApiUrl = () => {
-  const env = import.meta.env.MODE; // 'development', 'production', 'staging'
-  
-  switch (env) {
-    case 'production':
-      return import.meta.env.VITE_API_URL_PROD;
-    case 'staging':
-      return import.meta.env.VITE_API_URL_STAGING;
-    default:
-      return import.meta.env.VITE_API_URL_DEV;
-  }
-};
-const API_BASE_URL = getApiUrl() || '/api';
+//   const env = import.meta.env.MODE; // 'development', 'production', 'staging'
+
+//   switch (env) {
+//     case 'production':
+//       return import.meta.env.VITE_API_URL_PROD;
+//     case 'staging':
+//       return import.meta.env.VITE_API_URL_STAGING;
+//     default:
+//       return import.meta.env.VITE_API_URL_DEV;
+//   }
+ };
+
+const API_BASE_URL = 'https://location-logistique.onrender.com';
+console.log(`[API] Base URL définie à : ${API_BASE_URL}`);
 
 // Créer l'instance Axios
 const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true,        // ESSENTIEL pour les cookies
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  withCredentials: true,
+  headers: { 'Content-Type': 'application/json' },
   timeout: 10000,
 });
 
 // Intercepteur de requête
 api.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
+  (config: InternalAxiosRequestConfig) => {    console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
     return config;
   },
   (error: AxiosError) => {
