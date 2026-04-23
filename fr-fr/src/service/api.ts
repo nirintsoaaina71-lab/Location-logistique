@@ -20,6 +20,11 @@ const getApiUrl = () => {
 
 const API_BASE_URL = getApiUrl() || '/api';
 
+console.log('=== DEBUG ===');
+console.log('MODE:', import.meta.env.MODE);
+console.log('PROD:', import.meta.env.VITE_API_URL_PROD);
+console.log('STAGING:', import.meta.env.VITE_API_URL_STAGING);
+console.log('DEV:', import.meta.env.VITE_API_URL_DEV);
 console.log(`[API] Mode: ${import.meta.env.MODE}, Base URL: ${API_BASE_URL}`);
 
 // Créer l'instance Axios
