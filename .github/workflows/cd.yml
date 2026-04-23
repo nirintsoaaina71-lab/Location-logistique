@@ -1,0 +1,24 @@
+name: CD - Deploy to Production
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  # Ne s'exécute que si la PR est fusionnée (pas fermée sans fusion)
+  deploy-production:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    
+    steps:
+      # ========== DÉPLOIEMENT BACKEND (Render) ==========
+      - name: Deploy Backend to Render
+        run: |
+          curl -X POST "https://api.render.com/deploy/${{ secrets.RENDER_PROD_BACKEND_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}"
+      
+      # ========== DÉPLOIEMENT FRONTEND (Vercel) ==========
+      - name: Deploy Frontend to Vercel
+        run: |
+          curl -X POST "https://api.vercel.com/v1/integrations/deploy/${{ secrets.VERCEL_PROD_PROJECT_ID }}/${{ secrets.VERCEL_TOKEN }}"
