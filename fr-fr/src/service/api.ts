@@ -5,23 +5,23 @@ import { errorResponseSchema } from '../schemas/auth.schemas';
 import type { ErrorResponse } from '../schemas/auth.schemas';
 
 // Configuration
-//const getApiUrl = () => {
-//   const env = import.meta.env.MODE; // 'development', 'production', 'staging'
+const getApiUrl = () => {
+  const env = import.meta.env.MODE; // 'development', 'production', 'staging'
+  
+  switch (env) {
+    case 'production':
+      return import.meta.env.VITE_API_URL_PROD;
+    case 'staging':
+      return import.meta.env.VITE_API_URL_STAGING;
+    default:
+      return import.meta.env.VITE_API_URL_DEV;
+  }
+};
 
-//   switch (env) {
-//     case 'production':
-//       return import.meta.env.VITE_API_URL_PROD;
-//     case 'staging':
-//       return import.meta.env.VITE_API_URL_STAGING;
-//     default:
-//       return import.meta.env.VITE_API_URL_DEV;
-//   }
-// };
+const API_BASE_URL = getApiUrl() || '/api';
 
-// FORCE REDEPLOY - 22 AVRIL 2026 - 11H00
-const API_BASE_URL = 'https://location-logistique.onrender.com';
+console.log(`[API] Mode: ${import.meta.env.MODE}, Base URL: ${API_BASE_URL}`);
 
-console.log(`[API] Base URL définie à : ${API_BASE_URL}`);
 // Créer l'instance Axios
 const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
