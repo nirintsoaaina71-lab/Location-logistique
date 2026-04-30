@@ -5,41 +5,44 @@ import { errorResponseSchema } from '../schemas/auth.schemas';
 import type { ErrorResponse } from '../schemas/auth.schemas';
 
 // Configuration
+// Configuration - Version corrigée
 const getApiUrl = () => {
-  const env = import.meta.env.MODE; // 'development', 'production', 'preview'
-  const vercelEnv = import.meta.env.VERCEL_ENV; // 'development', 'preview', 'production' (spécifique Vercel)
+  // 🔥 PRIORITÉ : Utiliser VERCEL_ENV si disponible (plus fiable)
+  const vercelEnv = import.meta.env.VERCEL_ENV;
   
-  // 🔥 Priorité à l'environnement Vercel si présent
-  if (import.meta.env.VERCEL_ENV === 'preview') {
+  if (vercelEnv === 'preview') {
     return import.meta.env.VITE_API_URL_STAGING;
   }
   
-  if (import.meta.env.VERCEL_ENV === 'production') {
+  if (vercelEnv === 'production') {
     return import.meta.env.VITE_API_URL_PROD;
   }
   
   // Fallback sur MODE
-  switch (env) {
-    case 'production':
-      return import.meta.env.VITE_API_URL_PROD;
-    case 'preview':  // 👈 Ajoutez 'preview' au lieu de 'staging'
-      return import.meta.env.VITE_API_URL_STAGING;
-    default:
-      return import.meta.env.VITE_API_URL_DEV;
+  const mode = import.meta.env.MODE;
+  if (mode === 'production') {
+    return import.meta.env.VITE_API_URL_PROD;
   }
+  
+  if (mode === 'preview' || mode === 'staging') {
+    return import.meta.env.VITE_API_URL_STAGING;
+  }
+  
+  // Développement local
+  return import.meta.env.VITE_API_URL_DEV || '/api';
 };
-const API_BASE_URL = getApiUrl() || '/api';
 
-console.log(`[API] Mode: ${import.meta.env.MODE}, Base URL: ${API_BASE_URL}`);
+const API_BASE_URL = getApiUrl();
 
-// Créer l'instance Axios
+console.log(`[API] VERCEL_ENV: ${import.meta.env.VERCEL_ENV}, MODE: ${import.meta.env.MODE}, Base URL: ${API_BASE_URL}`);
+
+// Le reste de votre code reste identique...
 const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
   timeout: 10000,
 });
-
 // Intercepteur de requête
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {    console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
