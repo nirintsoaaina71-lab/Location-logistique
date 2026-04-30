@@ -77,7 +77,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(validatedResponse.user);
       
       // 5. Rediriger
-      navigate('/menu');
+      navigate('/dashboard');
       
       return { success: true };
     } catch (error) {
@@ -118,7 +118,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(validatedResponse.user);
       
       // 6. Rediriger
-      navigate('/menu');
+      navigate('/dashboard');
       
       return { success: true };
     } catch (error) {
