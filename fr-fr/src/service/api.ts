@@ -6,18 +6,28 @@ import type { ErrorResponse } from '../schemas/auth.schemas';
 
 // Configuration
 const getApiUrl = () => {
-  const env = import.meta.env.MODE; // 'development', 'production', 'staging'
+  const env = import.meta.env.MODE; // 'development', 'production', 'preview'
+  const vercelEnv = import.meta.env.VERCEL_ENV; // 'development', 'preview', 'production' (spécifique Vercel)
   
+  // 🔥 Priorité à l'environnement Vercel si présent
+  if (import.meta.env.VERCEL_ENV === 'preview') {
+    return import.meta.env.VITE_API_URL_STAGING;
+  }
+  
+  if (import.meta.env.VERCEL_ENV === 'production') {
+    return import.meta.env.VITE_API_URL_PROD;
+  }
+  
+  // Fallback sur MODE
   switch (env) {
     case 'production':
       return import.meta.env.VITE_API_URL_PROD;
-    case 'staging':
+    case 'preview':  // 👈 Ajoutez 'preview' au lieu de 'staging'
       return import.meta.env.VITE_API_URL_STAGING;
     default:
       return import.meta.env.VITE_API_URL_DEV;
   }
 };
-
 const API_BASE_URL = getApiUrl() || '/api';
 
 console.log(`[API] Mode: ${import.meta.env.MODE}, Base URL: ${API_BASE_URL}`);
