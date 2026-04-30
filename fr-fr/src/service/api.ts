@@ -7,32 +7,34 @@ import type { ErrorResponse } from '../schemas/auth.schemas';
 // Configuration
 // Configuration - Version corrigée
 const getApiUrl = () => {
+    return 'https://location-logistique.onrender.com';
+
   // 🔥 PRIORITÉ : Utiliser VERCEL_ENV si disponible (plus fiable)
-  const vercelEnv = import.meta.env.VERCEL_ENV;
+  // const vercelEnv = import.meta.env.VERCEL_ENV;
   
-  if (vercelEnv === 'preview') {
-    return import.meta.env.VITE_API_URL_STAGING;
-  }
+  // if (vercelEnv === 'preview') {
+  //   return import.meta.env.VITE_API_URL_STAGING;
+  // }
   
-  if (vercelEnv === 'production') {
-    return import.meta.env.VITE_API_URL_PROD;
-  }
+  // if (vercelEnv === 'production') {
+  //   return import.meta.env.VITE_API_URL_PROD;
+  // }
   
-  // Fallback sur MODE
-  const mode = import.meta.env.MODE;
-  if (mode === 'production') {
-    return import.meta.env.VITE_API_URL_PROD;
-  }
+  // // Fallback sur MODE
+  // const mode = import.meta.env.MODE;
+  // if (mode === 'production') {
+  //   return import.meta.env.VITE_API_URL_PROD;
+  // }
   
-  if (mode === 'preview' || mode === 'staging') {
-    return import.meta.env.VITE_API_URL_STAGING;
-  }
+  // if (mode === 'preview' || mode === 'staging') {
+  //   return import.meta.env.VITE_API_URL_STAGING;
+  // }
   
-  // Développement local
-  return import.meta.env.VITE_API_URL_DEV || '/api';
+  // // Développement local
+  // return import.meta.env.VITE_API_URL_DEV || '/api';
 };
 
-const API_BASE_URL = getApiUrl();
+const API_BASE_URL = getApiUrl()|| '/api';
 
 console.log(`[API] VERCEL_ENV: ${import.meta.env.VERCEL_ENV}, MODE: ${import.meta.env.MODE}, Base URL: ${API_BASE_URL}`);
 
