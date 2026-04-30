@@ -4,28 +4,40 @@ import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axio
 import { errorResponseSchema } from '../schemas/auth.schemas';
 import type { ErrorResponse } from '../schemas/auth.schemas';
 
-// Configuration
+// Configuration - Version corrigée pour Vercel
 const getApiUrl = () => {
-  const env = import.meta.env.MODE; // 'development', 'production', 'staging'
+  // 🔥 Utiliser VERCEL_ENV pour détecter l'environnement (plus fiable)
+  const vercelEnv = import.meta.env.VERCEL_ENV;
+  const mode = import.meta.env.MODE;
   
-  switch (env) {
-    case 'production':
-      return import.meta.env.VITE_API_URL_PROD;
-    case 'staging':
-      return import.meta.env.VITE_API_URL_STAGING;
-    default:
-      return import.meta.env.VITE_API_URL_DEV;
+  console.log(`[ENV DEBUG] VERCEL_ENV: ${vercelEnv}, MODE: ${mode}`);
+  
+  // Vercel Preview (staging)
+  if (vercelEnv === 'preview') {
+    console.log('✅ Environnement PREVIEW (staging) détecté');
+    return import.meta.env.VITE_API_URL_STAGING;
   }
+  
+  // Vercel Production
+  if (vercelEnv === 'production') {
+    console.log('✅ Environnement PRODUCTION détecté');
+    return import.meta.env.VITE_API_URL_PROD;
+  }
+  
+  // Environnement local ou autre
+  if (mode === 'development') {
+    console.log('✅ Environnement DEVELOPMENT (local) détecté');
+    return import.meta.env.VITE_API_URL_DEV || 'http://localhost:3000';
+  }
+  
+  // Fallback sécurisé : si aucune variable n'est trouvée
+  console.warn('⚠️ Aucun environnement reconnu, utilisation du fallback');
+  return import.meta.env.VITE_API_URL_STAGING || 'https://location-logistique.onrender.com';
 };
 
-const API_BASE_URL = getApiUrl() || '/api';
+const API_BASE_URL = getApiUrl();
 
-console.log('=== DEBUG ===');
-console.log('MODE:', import.meta.env.MODE);
-console.log('PROD:', import.meta.env.VITE_API_URL_PROD);
-console.log('STAGING:', import.meta.env.VITE_API_URL_STAGING);
-console.log('DEV:', import.meta.env.VITE_API_URL_DEV);
-console.log(`[API] Mode: ${import.meta.env.MODE}, Base URL: ${API_BASE_URL}`);
+console.log(`[API] Base URL finale: ${API_BASE_URL}`);
 
 // Créer l'instance Axios
 const api: AxiosInstance = axios.create({
@@ -37,7 +49,8 @@ const api: AxiosInstance = axios.create({
 
 // Intercepteur de requête
 api.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {    console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
+  (config: InternalAxiosRequestConfig) => {
+    console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
     return config;
   },
   (error: AxiosError) => {
