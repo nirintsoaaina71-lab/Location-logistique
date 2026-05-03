@@ -1,39 +1,48 @@
+// services/api.ts
 import axios from 'axios';
-import type { AxiosError, AxiosInstance } from 'axios';  // ✅ plus de InternalAxiosRequestConfig
+import type { AxiosError, AxiosInstance } from 'axios';
 import { errorResponseSchema } from '../schemas/auth.schemas';
-// ✅ plus d'import ErrorResponse
 
-// Configuration
-const getApiUrl = () => {
-  const mode = import.meta.env.MODE;
-  const vercelEnv = import.meta.env.VERCEL_ENV;
+/**
+ * Détecte l'environnement en fonction de l'URL actuelle du navigateur
+ * C'est la méthode la plus fiable car elle ne dépend pas de Vercel
+ */
+const getEnvironment = (): 'preview' | 'production' | 'development' => {
+  const hostname = window.location.hostname;
   
-  console.log(`[ENV DEBUG] VERCEL_ENV: ${vercelEnv}, MODE: ${mode}`);
-  
-  // Preview (staging)
-  if (vercelEnv === 'preview') {
-    const url = import.meta.env.VITE_API_URL_STAGING;
-    console.log(`✅ Preview détecté - Base URL: ${url}`);
-    return url;
+  // Preview Vercel : contient toujours 'git-' ou 'vercel.app' avec sous-domaine
+  if (hostname.includes('git-') || (hostname.includes('vercel.app') && hostname !== 'location-logistique.vercel.app')) {
+    return 'preview';
   }
   
-  // Production (Vercel)
-  if (mode === 'production') {
-    const url = import.meta.env.VITE_API_URL_PROD;
-    console.log(`✅ Production détectée - Base URL: ${url}`);
-    return url;
+  // Production (domaine personnalisé ou vercel.app principal)
+  if (hostname === 'location-logistique.vercel.app' || hostname === 'location-logistique.com') {
+    return 'production';
   }
   
   // Développement local
-  if (mode === 'development') {
-    const url = import.meta.env.VITE_API_URL_DEV || 'http://localhost:3000';
-    console.log(`✅ Développement local - Base URL: ${url}`);
-    return url;
-  }
+  return 'development';
+};
+
+const getApiUrl = () => {
+  const env = getEnvironment();
   
-  // Fallback
-  console.warn('⚠️ Aucun environnement reconnu');
-  return '/api';
+  console.log(`[ENV] Environnement détecté: ${env}`);
+  
+  switch (env) {
+    case 'preview':
+      const stagingUrl = import.meta.env.VITE_API_URL_STAGING;
+      console.log(`✅ Preview - Backend: ${stagingUrl}`);
+      return stagingUrl;
+    case 'production':
+      const prodUrl = import.meta.env.VITE_API_URL_PROD;
+      console.log(`✅ Production - Backend: ${prodUrl}`);
+      return prodUrl;
+    case 'development':
+      const devUrl = import.meta.env.VITE_API_URL_DEV || 'http://localhost:3000';
+      console.log(`✅ Développement - Backend: ${devUrl}`);
+      return devUrl;
+  }
 };
 
 const API_BASE_URL = getApiUrl();
