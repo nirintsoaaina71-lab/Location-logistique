@@ -2,51 +2,41 @@
 import axios from 'axios';
 import type { AxiosError, AxiosInstance } from 'axios';
 import { errorResponseSchema } from '../schemas/auth.schemas';
-// Configuration - Version adaptée pour Vercel (Preview + Production)
+
+// Configuration
 const getApiUrl = () => {
-  // Variables d'environnement Vercel
-  const vercelEnv = import.meta.env.VERCEL_ENV; // 'preview', 'production', ou undefined
-  const mode = import.meta.env.MODE; // 'development', 'production'
+  const mode = import.meta.env.MODE;
+  const vercelEnv = import.meta.env.VERCEL_ENV;
   
-  console.log(`[ENV] VERCEL_ENV: ${vercelEnv}, MODE: ${mode}`);
+  console.log(`[ENV DEBUG] VERCEL_ENV: ${vercelEnv}, MODE: ${mode}`);
   
-  // 🔥 CAS 1 : Preview (staging) sur Vercel
+  // Preview (staging)
   if (vercelEnv === 'preview') {
     const url = import.meta.env.VITE_API_URL_STAGING;
-    console.log(`✅ Preview (staging) détecté - Base URL: ${url}`);
+    console.log(`✅ Preview détecté - Base URL: ${url}`);
     return url;
   }
   
-  // 🔥 CAS 2 : Production sur Vercel
-  if (vercelEnv === 'production') {
+  // Production (Vercel)
+  if (mode === 'production') {
     const url = import.meta.env.VITE_API_URL_PROD;
     console.log(`✅ Production détectée - Base URL: ${url}`);
     return url;
   }
   
-  // 🔥 CAS 3 : Environnement local (développement)
+  // Développement local
   if (mode === 'development') {
     const url = import.meta.env.VITE_API_URL_DEV || 'http://localhost:3000';
     console.log(`✅ Développement local - Base URL: ${url}`);
     return url;
   }
   
-  // 🔥 CAS 4 : Production (fallback si VERCEL_ENV est undefined)
-  // Sur Vercel, en production, VERCEL_ENV est souvent undefined
-  // mais MODE === 'production'
-  if (mode === 'production') {
-    const url = import.meta.env.VITE_API_URL_PROD;
-    console.log(`✅ Production (fallback) - Base URL: ${url}`);
-    return url;
-  }
-  
-  // Dernier fallback (normalement jamais atteint)
+  // Fallback (normalement jamais atteint)
   console.warn('⚠️ Aucun environnement reconnu, utilisation du fallback');
   return import.meta.env.VITE_API_URL_PROD || 'https://location-logistique-backend-prod.onrender.com';
 };
 
 const API_BASE_URL = getApiUrl();
-
 console.log(`[API] Base URL finale: ${API_BASE_URL}`);
 
 // Créer l'instance Axios
@@ -63,13 +53,13 @@ api.interceptors.request.use(
     console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
     return config;
   },
-  (error) => {
+  (error: AxiosError) => {
     console.error('[API] Request error:', error);
     return Promise.reject(error);
   }
 );
 
-// Intercepteur de réponse
+// Intercepteur de réponse (version simplifiée sans erreurs TS)
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
@@ -83,7 +73,6 @@ api.interceptors.response.use(
       requestUrl.includes('/auth/refresh');
     
     let errorMessage = 'Une erreur est survenue';
-    let errorDetails = null;
     
     if (error.response?.data) {
       try {
@@ -91,7 +80,6 @@ api.interceptors.response.use(
         errorMessage = Array.isArray(parsedError.message)
           ? parsedError.message.join(', ')
           : parsedError.message;
-        errorDetails = parsedError;
       } catch {
         const rawMessage = (error.response.data as any)?.message;
         errorMessage = Array.isArray(rawMessage) ? rawMessage.join(', ') : rawMessage || errorMessage;
@@ -114,7 +102,6 @@ api.interceptors.response.use(
     return Promise.reject({
       ...error,
       message: errorMessage,
-      details: errorDetails,
     });
   }
 );
