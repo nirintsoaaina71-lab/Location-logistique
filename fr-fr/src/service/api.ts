@@ -4,35 +4,47 @@ import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axio
 import { errorResponseSchema } from '../schemas/auth.schemas';
 import type { ErrorResponse } from '../schemas/auth.schemas';
 
-// Configuration - Version corrigée pour Vercel
+// Configuration - Version adaptée pour Vercel (Preview + Production)
 const getApiUrl = () => {
-  // 🔥 Utiliser VERCEL_ENV pour détecter l'environnement (plus fiable)
-  const vercelEnv = import.meta.env.VERCEL_ENV;
-  const mode = import.meta.env.MODE;
+  // Variables d'environnement Vercel
+  const vercelEnv = import.meta.env.VERCEL_ENV; // 'preview', 'production', ou undefined
+  const mode = import.meta.env.MODE; // 'development', 'production'
   
-  console.log(`[ENV DEBUG] VERCEL_ENV: ${vercelEnv}, MODE: ${mode}`);
+  console.log(`[ENV] VERCEL_ENV: ${vercelEnv}, MODE: ${mode}`);
   
-  // Vercel Preview (staging)
+  // 🔥 CAS 1 : Preview (staging) sur Vercel
   if (vercelEnv === 'preview') {
-    console.log('✅ Environnement PREVIEW (staging) détecté');
-    return import.meta.env.VITE_API_URL_STAGING;
+    const url = import.meta.env.VITE_API_URL_STAGING;
+    console.log(`✅ Preview (staging) détecté - Base URL: ${url}`);
+    return url;
   }
   
-  // Vercel Production
+  // 🔥 CAS 2 : Production sur Vercel
   if (vercelEnv === 'production') {
-    console.log('✅ Environnement PRODUCTION détecté');
-    return import.meta.env.VITE_API_URL_PROD;
+    const url = import.meta.env.VITE_API_URL_PROD;
+    console.log(`✅ Production détectée - Base URL: ${url}`);
+    return url;
   }
   
-  // Environnement local ou autre
+  // 🔥 CAS 3 : Environnement local (développement)
   if (mode === 'development') {
-    console.log('✅ Environnement DEVELOPMENT (local) détecté');
-    return import.meta.env.VITE_API_URL_DEV || 'http://localhost:3000';
+    const url = import.meta.env.VITE_API_URL_DEV || 'http://localhost:3000';
+    console.log(`✅ Développement local - Base URL: ${url}`);
+    return url;
   }
   
-  // Fallback sécurisé : si aucune variable n'est trouvée
+  // 🔥 CAS 4 : Production (fallback si VERCEL_ENV est undefined)
+  // Sur Vercel, en production, VERCEL_ENV est souvent undefined
+  // mais MODE === 'production'
+  if (mode === 'production') {
+    const url = import.meta.env.VITE_API_URL_PROD;
+    console.log(`✅ Production (fallback) - Base URL: ${url}`);
+    return url;
+  }
+  
+  // Dernier fallback (normalement jamais atteint)
   console.warn('⚠️ Aucun environnement reconnu, utilisation du fallback');
-  return import.meta.env.VITE_API_URL_STAGING || 'https://location-logistique.onrender.com';
+  return import.meta.env.VITE_API_URL_PROD || 'https://location-logistique-backend-prod.onrender.com';
 };
 
 const API_BASE_URL = getApiUrl();
@@ -49,23 +61,21 @@ const api: AxiosInstance = axios.create({
 
 // Intercepteur de requête
 api.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
+  (config) => {
     console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
     return config;
   },
-  (error: AxiosError) => {
+  (error) => {
     console.error('[API] Request error:', error);
     return Promise.reject(error);
   }
 );
 
-// Intercepteur de réponse avec validation Zod
+// Intercepteur de réponse
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    const originalRequest = error.config as any;
     const requestUrl = originalRequest?.url ?? '';
     const isAuthEndpoint =
       requestUrl.includes('/auth/login') ||
@@ -74,31 +84,27 @@ api.interceptors.response.use(
       requestUrl.includes('/auth/me') ||
       requestUrl.includes('/auth/refresh');
     
-    // Formater l'erreur de manière cohérente
     let errorMessage = 'Une erreur est survenue';
-    let errorDetails: ErrorResponse | null = null;
+    let errorDetails = null;
     
     if (error.response?.data) {
       try {
-        // Essayer de valider avec Zod
         const parsedError = errorResponseSchema.parse(error.response.data);
         errorMessage = Array.isArray(parsedError.message)
           ? parsedError.message.join(', ')
           : parsedError.message;
         errorDetails = parsedError;
       } catch {
-        // Si la validation échoue, utiliser le message brut
-        const rawMessage = (error.response.data as Partial<ErrorResponse>)?.message;
+        const rawMessage = (error.response.data as any)?.message;
         errorMessage = Array.isArray(rawMessage) ? rawMessage.join(', ') : rawMessage || errorMessage;
       }
     } else if (error.request) {
       errorMessage = 'Impossible de contacter le serveur';
     }
     
-    // Gestion du refresh token (401)
+    // Refresh token automatique
     if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
       originalRequest._retry = true;
-      
       try {
         await api.post('/auth/refresh');
         return api(originalRequest);
@@ -107,7 +113,6 @@ api.interceptors.response.use(
       }
     }
     
-    // Transformer l'erreur pour avoir un message cohérent
     return Promise.reject({
       ...error,
       message: errorMessage,
