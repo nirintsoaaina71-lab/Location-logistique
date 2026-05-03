@@ -1,9 +1,7 @@
 // services/api.ts
 import axios from 'axios';
-import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import type { AxiosError, AxiosInstance } from 'axios';
 import { errorResponseSchema } from '../schemas/auth.schemas';
-import type { ErrorResponse } from '../schemas/auth.schemas';
-
 // Configuration - Version adaptée pour Vercel (Preview + Production)
 const getApiUrl = () => {
   // Variables d'environnement Vercel
