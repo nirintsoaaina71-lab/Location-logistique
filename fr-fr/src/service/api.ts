@@ -1,7 +1,7 @@
-// services/api.ts
 import axios from 'axios';
-import type { AxiosError, AxiosInstance } from 'axios';
+import type { AxiosError, AxiosInstance } from 'axios';  // ✅ plus de InternalAxiosRequestConfig
 import { errorResponseSchema } from '../schemas/auth.schemas';
+// ✅ plus d'import ErrorResponse
 
 // Configuration
 const getApiUrl = () => {
