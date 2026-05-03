@@ -31,12 +31,13 @@ const getApiUrl = () => {
     return url;
   }
   
-  // Fallback (normalement jamais atteint)
-  console.warn('⚠️ Aucun environnement reconnu, utilisation du fallback');
-  return import.meta.env.VITE_API_URL_PROD || 'https://location-logistique-backend-prod.onrender.com';
+  // Fallback
+  console.warn('⚠️ Aucun environnement reconnu');
+  return '/api';
 };
 
 const API_BASE_URL = getApiUrl();
+
 console.log(`[API] Base URL finale: ${API_BASE_URL}`);
 
 // Créer l'instance Axios
@@ -59,7 +60,7 @@ api.interceptors.request.use(
   }
 );
 
-// Intercepteur de réponse (version simplifiée sans erreurs TS)
+// Intercepteur de réponse
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
@@ -68,7 +69,6 @@ api.interceptors.response.use(
     const isAuthEndpoint =
       requestUrl.includes('/auth/login') ||
       requestUrl.includes('/auth/register') ||
-      requestUrl.includes('/auth/signup') ||
       requestUrl.includes('/auth/me') ||
       requestUrl.includes('/auth/refresh');
     
