@@ -3,6 +3,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import { AuthProvider } from '../hooks/useAuth';
 import { ThemeProvider } from '../hooks/useTheme';
+import { MedicamentProvider } from '../hooks/useMedicament';
 import Menu from './pages/Menu';
 import { useAuth } from '../hooks/useAuth';
 import ForgotPassword from './pages/ForgotPassword';
@@ -57,7 +58,9 @@ function App() {
     <BrowserRouter>
       <ThemeProvider>
         <AuthProvider>
-          <AppRoutes />
+          <MedicamentProvider>
+            <AppRoutes />
+          </MedicamentProvider>
         </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>
