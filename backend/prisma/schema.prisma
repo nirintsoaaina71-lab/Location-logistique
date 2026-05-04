@@ -8,16 +8,116 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id    String  @id @default(cuid())
-  email String  @unique
-  password String
-  isResetPassword Boolean @default(false)
-  resetPasswordToken String?  @unique
-  name  String?
+  id                 String     @id @default(cuid())
+  email              String     @unique
+  password           String
+  isResetPassword    Boolean    @default(false)
+  resetPasswordToken String?    @unique
+  name               String?
+  // Relation: quel utilisateur a enregistré quelles commandes
+  commandes          Commande[]
+}
+
+model Client {
+  id        String  @id @default(cuid())
+  nom       String
+  telephone String?
+
+  // Historique des commandes du client
+  commandes Commande[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// OPTIMISATION: Gestion des catégories de médicaments (ex: Antibiotiques, Antalgiques)
+model Categorie {
+  id          String       @id @default(cuid())
+  nom         String       @unique
+  description String?
+  medicaments Medicament[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Medicament {
+  id              String  @id @default(cuid())
+  nom             String
+  description     String?
+  prixAchat       Float
+  prixVente       Float
+  quantiteEnStock Int // Quantité disponible (par boîtes)
+
+  categorieId String?
+  categorie   Categorie? @relation(fields: [categorieId], references: [id])
+
+  lignesCommande     LigneCommande[]
+  approvisionnements Approvisionnement[] // OPTIMISATION: Historique de rentrées de stock
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// OPTIMISATION: Garder une trace des entrées en stock (achats fournisseur)
+model Approvisionnement {
+  id             String   @id @default(cuid())
+  quantiteAjoute Int
+  nomFournisseur String?
+  dateAjout      DateTime @default(now())
+
+  medicamentId String
+  medicament   Medicament @relation(fields: [medicamentId], references: [id])
+}
+
+model Commande {
+  id           String         @id @default(cuid())
+  dateCommande DateTime       @default(now())
+  status       StatusCommande @default(EN_COURS)
+  totalPrix    Float          @default(0) // Somme de toutes les LigneCommande
+
+  // Le client s'il est enregistré
+  clientId String?
+  client   Client? @relation(fields: [clientId], references: [id])
+
+  // OPTIMISATION: Pour les clients de passage occasionnels (sans créer un compte client)
+  nomClientOccasionnel String?
+  telClientOccasionnel String?
+
+  // L'employé/vendeur qui a fait la vente
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  lignesCommande LigneCommande[] // Les médicaments commandés
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Table intermédiaire : Quantité et prix spécifique de chaque médicament dans une commande
+model LigneCommande {
+  id           String @id @default(cuid())
+  quantite     Int
+  prixUnitaire Float // OPTIMISATION: Figer le prix de vente au moment exact de la commande
+  sousTotal    Float // quantite * prixUnitaire
+
+  commandeId String
+  commande   Commande @relation(fields: [commandeId], references: [id], onDelete: Cascade)
+
+  medicamentId String
+  medicament   Medicament @relation(fields: [medicamentId], references: [id])
+
+  @@unique([commandeId, medicamentId])
+}
+
+enum StatusCommande {
+  EN_COURS
+  LIVREE
+  ANNULEE
 }
