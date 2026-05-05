@@ -2,26 +2,28 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import cookieParser from 'cookie-parser';  // ← Utiliser import * as
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  // 🔧 1. D'abord configurer CORS
-   app.enableCors({
-  origin: true,  // Accepte toutes les origines (⚠️ pas pour production)
-  credentials: true,
-});
+  // 🔧 CORS (pour staging, tu peux garder origin: true)
+  app.enableCors({
+    origin: true,
+    credentials: true,
+  });
   
-  // 🔧 2. Ensuite les middlewares
   app.use(cookieParser());
   
-  // 🔧 3. Enfin les pipes
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     transform: true,
   }));
   
-  await app.listen(process.env.PORT ?? 3001);
+  // 🔥 CORRECTION : Écouter sur 0.0.0.0
+  const port = process.env.PORT || 3001;
+  await app.listen(port, '0.0.0.0');
+  
+  console.log(`🚀 Server running on port ${port}`);
 }
 bootstrap();
