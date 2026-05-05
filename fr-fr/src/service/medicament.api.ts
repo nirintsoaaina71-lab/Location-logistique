@@ -1,11 +1,10 @@
-// services/api.ts
+// services/medicament.api.ts
 import axios from 'axios';
 import type { AxiosError, AxiosInstance } from 'axios';
 import { errorResponseSchema } from '../schemas/auth.schemas';
 
 /**
  * Détecte l'environnement en fonction de l'URL actuelle du navigateur
- * C'est la méthode la plus fiable car elle ne dépend pas de Vercel
  */
 const getEnvironment = (): 'preview' | 'production' | 'development' => {
   const hostname = window.location.hostname;
@@ -47,10 +46,10 @@ const getApiUrl = () => {
 
 const API_BASE_URL = getApiUrl();
 
-console.log(`[API] Base URL finale: ${API_BASE_URL}`);
+console.log(`[API] Base URL medicament: ${API_BASE_URL}`);
 
-// Créer l'instance Axios
-const api: AxiosInstance = axios.create({
+// Créer l'instance Axios pour les médicaments
+const medicamentApi: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
@@ -58,7 +57,7 @@ const api: AxiosInstance = axios.create({
 });
 
 // Intercepteur de requête
-api.interceptors.request.use(
+medicamentApi.interceptors.request.use(
   (config) => {
     console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
     return config;
@@ -70,7 +69,7 @@ api.interceptors.request.use(
 );
 
 // Intercepteur de réponse
-api.interceptors.response.use(
+medicamentApi.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as any;
@@ -101,8 +100,8 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
       originalRequest._retry = true;
       try {
-        await api.post('/auth/refresh');
-        return api(originalRequest);
+        await medicamentApi.post('/auth/refresh');
+        return medicamentApi(originalRequest);
       } catch {
         return Promise.reject(new Error('Session expirée'));
       }
@@ -115,4 +114,56 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+// ===== FONCTIONS API POUR LES MÉDICAMENTS =====
+
+// Ajouter un médicament (noms français)
+export const addMedicament = async (data: {
+  nom: string;
+  categorieId: string;
+  prixAchat: number;
+  prixVente: number;
+  quantiteEnStock: number;
+  description?: string;
+}) => {
+  console.log('[API] addMedicament - Données envoyées:', JSON.stringify(data, null, 2));
+  return medicamentApi.post('/medicament/add', data);
+};
+
+// Obtenir la liste des médicaments
+export const getMedicaments = async () => {
+  console.log('[API] getMedicaments - Récupération de la liste');
+  return medicamentApi.get('/medicament/listes');
+};
+
+// Obtenir la liste des catégories
+export const getCategories = async () => {
+  console.log('[API] getCategories - Récupération de la liste');
+  return medicamentApi.get('/medicament/categories');
+};
+
+// Obtenir un médicament spécifique
+export const getMedicamentById = async (id: string) => {
+  console.log(`[API] getMedicamentById - ID: ${id}`);
+  return medicamentApi.get(`/medicament/${id}`);
+};
+
+// Modifier un médicament (noms français)
+export const updateMedicament = async (id: string, data: {
+   nom?: string;
+   categorieId?: string;
+   prixAchat?: number;
+   prixVente?: number;
+   quantiteEnStock?: number;
+   description?: string;
+}) => {
+   console.log(`[API] updateMedicament - ID: ${id}, Données:`, JSON.stringify(data, null, 2));
+   return medicamentApi.put(`/medicament/updat/${id}`, data);
+};
+
+// Supprimer un médicament
+export const deleteMedicament = async (id: string) => {
+  console.log(`[API] deleteMedicament - ID: ${id}`);
+  return medicamentApi.delete(`/medicament/delet/${id}`);
+};
+
+export default medicamentApi;
