@@ -12,7 +12,7 @@ import {
 } from '../src/service/medicament.api';
 import {
   addMedicineSchema,
-  addMedicineResponseSchema,
+
   medicineResponseSchema,
   medicineArraySchema,
 } from '../src/schemas/produit.schemas';

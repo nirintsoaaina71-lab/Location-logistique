@@ -13,11 +13,7 @@ const categorySchema = z
   .string()
   .min(1, "La catégorie est requise");
 
-// Schéma pour l'ID de catégorie (pour l'API)
-const categoryIdSchema = z
-  .string()
-  .min(1, "L'ID de la catégorie est requis")
-  .uuid("Format d'ID invalide");
+
 
 // Schéma pour le prix d'achat (en Ariary)
 const purchasePriceSchema = z
