@@ -2,17 +2,15 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Chrome, Apple, Twitter, Mail, Lock, Eye, EyeOff, Pill, Sun, Moon } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Shield, Headphones, BriefcaseMedical } from 'lucide-react';
 import { loginSchema, type LoginFormData } from '../schemas/auth.schemas';
 import { useAuth } from '../../hooks/useAuth';
-import { useTheme } from '../../hooks/useTheme';
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   
   const { login } = useAuth();
-  const { resolvedTheme, toggleTheme } = useTheme();             
 
   const {
     register,
@@ -28,11 +26,9 @@ const Login: React.FC = () => {
     setIsLoading(true);
     
     try {
-      //  Utiliser le hook useAuth au lieu d'axios directement
       const result = await login(data);
 
       if (!result.success) {
-        // Afficher l'erreur retournée par le hook
         setError('root', {
           type: 'manual',
           message: result.error || 'Erreur de connexion',
@@ -50,176 +46,160 @@ const Login: React.FC = () => {
     }
   };
 
-  // Liste des icônes sociales pour éviter la répétition
-  const socialIcons = [
-    { Icon: Chrome, label: 'Google' },
-    { Icon: Apple, label: 'Apple' },
-    { Icon: Twitter, label: 'Twitter' },
-  ] as const;
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-primary/5 flex items-center justify-center p-4 transition-colors duration-300">
-      {/* Theme toggle */}
-      <button
-        onClick={toggleTheme}
-        className="fixed top-4 right-4 p-3 rounded-full bg-surface border border-border shadow-lg hover:shadow-xl transition-all duration-200 text-text-secondary hover:text-text-primary"
-        aria-label={resolvedTheme === 'dark' ? 'Activer le thème clair' : 'Activer le thème sombre'}
-      >
-        {resolvedTheme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-      </button>
-
-      <div className="max-w-md w-full bg-surface rounded-2xl p-8 shadow-2xl border border-border">
+    <div className="min-h-screen bg-[#f5f7f8] flex items-center justify-center p-4 transition-colors duration-300">
+      <div className="w-full max-w-[420px]">
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Pill size={32} className="text-primary" />
+          <div className="inline-flex items-center gap-2 mb-2">
+            <BriefcaseMedical size={28} className="text-[#4a6670]" />
+            <h1 className="text-2xl font-semibold text-[#1e3a5f]">
+              PharmaSync Pro
+            </h1>
           </div>
-          <h1 className="font-black text-3xl text-text-primary mb-2">
-            PharmaGest
-          </h1>
-          <p className="text-text-secondary text-sm">
-            Gestion de pharmacie simplifiée
+          <p className="text-[#4b5563] text-xs tracking-widest uppercase">
+            Précision clinique
           </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-          {/* Champ Email */}
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-text-secondary">
-              Adresse email
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-text-muted" />
+        {/* Login Card */}
+        <div className="bg-white rounded-lg border border-[#d1d5db] shadow-sm p-8">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+            {/* Champ Email */}
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-[#1e3a5f]">
+                Adresse email
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                  <Mail className="h-4.5 w-4.5 text-[#9ca3af]" />
+                </div>
+                <input
+                  type="email"
+                  {...register('email')}
+                  placeholder="pharmacien@pharmasync.pro"
+                  className={`w-full bg-[#f8f9fa] pl-11 pr-4 py-2.5 rounded border 
+                           transition-all duration-200
+                           focus:outline-none focus:ring-1 focus:ring-[#4a6670]/30 focus:border-[#4a6670]
+                           text-[#1e3a5f] placeholder-[#9ca3af] text-sm
+                           ${errors.email ? 'border-[#dc2626]' : 'border-[#d1d5db]'}`}
+                  disabled={isLoading}
+                />
               </div>
-              <input
-                type="email"
-                {...register('email')}
-                placeholder="votre@email.fr"
-                className={`w-full bg-surface-hover pl-12 pr-4 py-3 rounded-xl 
-                         border-2 transition-all duration-200
-                         focus:outline-none focus:border-primary
-                         text-text-primary placeholder-text-muted
-                         ${errors.email ? 'border-danger' : 'border-border'}`}
-                disabled={isLoading}
-              />
+              {errors.email && (
+                <p className="text-[#dc2626] text-xs ml-1">{errors.email.message}</p>
+              )}
             </div>
-            {errors.email && (
-              <p className="text-danger text-xs ml-2">{errors.email.message}</p>
-            )}
-          </div>
 
-          {/* Champ Mot de passe */}
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-text-secondary">
-              Mot de passe
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-text-muted" />
+            {/* Champ Mot de passe */}
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-[#1e3a5f]">
+                Mot de passe
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                  <Lock className="h-4.5 w-4.5 text-[#9ca3af]" />
+                </div>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  {...register('password')}
+                  placeholder="••••••••"
+                  className={`w-full bg-[#f8f9fa] pl-11 pr-11 py-2.5 rounded border 
+                           transition-all duration-200
+                           focus:outline-none focus:ring-1 focus:ring-[#4a6670]/30 focus:border-[#4a6670]
+                           text-[#1e3a5f] placeholder-[#9ca3af] text-sm
+                           ${errors.password ? 'border-[#dc2626]' : 'border-[#d1d5db]'}`}
+                  disabled={isLoading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center"
+                  disabled={isLoading}
+                  aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4.5 w-4.5 text-[#9ca3af] hover:text-[#4b5563]" />
+                  ) : (
+                    <Eye className="h-4.5 w-4.5 text-[#9ca3af] hover:text-[#4b5563]" />
+                  )}
+                </button>
               </div>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                {...register('password')}
-                placeholder="••••••••"
-                className={`w-full bg-surface-hover pl-12 pr-12 py-3 rounded-xl 
-                         border-2 transition-all duration-200
-                         focus:outline-none focus:border-primary
-                         text-text-primary placeholder-text-muted
-                         ${errors.password ? 'border-danger' : 'border-border'}`}
-                disabled={isLoading}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-4 flex items-center"
-                disabled={isLoading}
-                aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
-              >
-                {showPassword ? (
-                  <EyeOff className="h-5 w-5 text-text-muted hover:text-text-secondary" />
-                ) : (
-                  <Eye className="h-5 w-5 text-text-muted hover:text-text-secondary" />
-                )}
-              </button>
+              {errors.password && (
+                <p className="text-[#dc2626] text-xs ml-1">{errors.password.message}</p>
+              )}
             </div>
-            {errors.password && (
-              <p className="text-danger text-xs ml-2">{errors.password.message}</p>
+
+            {/* Message d'erreur global */}
+            {errors.root && (
+              <div className="bg-[#dc2626]/10 border border-[#dc2626]/20 text-[#dc2626] px-4 py-3 rounded text-sm">
+                {errors.root.message}
+              </div>
             )}
-          </div>
 
-          {/* Mot de passe oublié */}
-          <div className="text-right">
-            <Link
-              to="/forgot-password"
-              className="text-xs text-primary hover:underline font-medium"
+            {/* Bouton de connexion */}
+            <button
+              type="submit"
+              disabled={isLoading || isSubmitting}
+              className="w-full font-medium bg-[#4a6670] 
+                       text-white py-2.5 rounded shadow-sm
+                       hover:bg-[#3d5660] hover:shadow active:scale-[0.99] 
+                       transition-all duration-200
+                       disabled:opacity-50 disabled:cursor-not-allowed 
+                       disabled:hover:scale-100 disabled:active:scale-100
+                       flex items-center justify-center space-x-2 text-sm"
             >
-              Mot de passe oublié ?
-            </Link>
-          </div>
+              {isLoading ? (
+                <>
+                  <div className="animate-spin h-4.5 w-4.5 border-2 border-white border-t-transparent rounded-full"></div>
+                  <span>Connexion...</span>
+                </>
+              ) : (
+                'Se connecter'
+              )}
+            </button>
 
-          {/* Message d'erreur global */}
-          {errors.root && (
-            <div className="bg-danger/10 border border-danger/20 text-danger px-4 py-3 rounded-xl text-sm">
-              {errors.root.message}
-            </div>
-          )}
-
-          {/* Bouton de connexion */}
-          <button
-            type="submit"
-            disabled={isLoading || isSubmitting}
-            className="w-full font-bold bg-gradient-to-r from-primary to-primary-hover 
-                     text-white py-3 rounded-xl shadow-lg
-                     hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] 
-                     transition-all duration-200
-                     disabled:opacity-50 disabled:cursor-not-allowed 
-                     disabled:hover:scale-100 disabled:active:scale-100
-                     flex items-center justify-center space-x-2"
-          >
-            {isLoading ? (
-              <>
-                <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
-                <span>Connexion...</span>
-              </>
-            ) : (
-              'Se connecter'
-            )}
-          </button>
-
-          {/* Lien vers l'inscription */}
-          <p className="text-center text-sm text-text-secondary mt-4">
-            Pas encore de compte ?{' '}
-            <Link 
-              to="/signup" 
-              className="text-primary hover:underline font-medium"
-            >
-              Créer un compte
-            </Link>
-          </p>
-        </form>
-
-        {/* Section des réseaux sociaux */}
-        <div className="mt-8 pt-6 border-t border-border">
-          <span className="block text-center text-xs text-text-muted mb-4">
-            Ou connectez-vous avec
-          </span>
-          
-          <div className="flex justify-center gap-4">
-            {socialIcons.map(({ Icon, label }) => (
-              <button 
-                key={label}
-                className="p-3 rounded-full bg-surface-hover border border-border
-                         hover:bg-surface-hover/80 hover:scale-110 active:scale-90 transition-all duration-200
-                         disabled:opacity-50 disabled:cursor-not-allowed text-text-secondary"
-                disabled={isLoading}
-                aria-label={`Se connecter avec ${label}`}
+            {/* Mot de passe oublié */}
+            <div className="text-center">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-[#4a6670] hover:underline font-medium"
               >
-                <Icon className="h-5 w-5" />
-              </button>
-            ))}
+                Mot de passe oublié ?
+              </Link>
+            </div>
+
+            {/* Lien d'inscription */}
+            <p className="text-center text-sm text-[#4b5563]">
+              Pas encore de compte ?{' '}
+              <Link
+                to="/signup"
+                className="text-[#4a6670] hover:underline font-medium"
+              >
+                Créer un compte
+              </Link>
+            </p>
+          </form>
+        </div>
+
+        {/* Info boxes */}
+        <div className="mt-8 grid grid-cols-2 gap-4">
+          <div className="bg-[#f0f0f0] border border-[#d1d5db] rounded p-4">
+            <Shield size={18} className="text-[#4a6670] mb-2" />
+            <h3 className="text-sm font-medium text-[#1e3a5f] mb-1">Accès sécurisé</h3>
+            <p className="text-xs text-[#4b5563]">Interface pharmacie conforme HIPAA et chiffrée.</p>
+          </div>
+          <div className="bg-[#f0f0f0] border border-[#d1d5db] rounded p-4">
+            <Headphones size={18} className="text-[#4a6670] mb-2" />
+            <h3 className="text-sm font-medium text-[#1e3a5f] mb-1">Support IT</h3>
+            <p className="text-xs text-[#4b5563]">Assistance technique 24/7 pour le personnel clinique.</p>
           </div>
         </div>
+
+        {/* Copyright */}
+        <p className="text-center text-xs text-[#9ca3af] mt-6">
+          © 2024 PharmaSync Pro. Tous droits réservés.
+        </p>
       </div>
     </div>
   );

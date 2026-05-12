@@ -13,6 +13,7 @@ import Commandes from './pages/Commandes';
 import Produits from './pages/Produits';
 import HistoriqueClient from './pages/HistoriqueClient';
 import Parametres from './pages/Parametres';
+import Finance from './pages/Finance';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -46,6 +47,7 @@ function AppRoutes() {
       <Route path="/dashboard/produits" element={user ? <Produits /> : <Navigate to="/login" replace />} />
       <Route path="/dashboard/historique" element={user ? <HistoriqueClient /> : <Navigate to="/login" replace />} />
       <Route path="/dashboard/parametres" element={user ? <Parametres /> : <Navigate to="/login" replace />} />
+      <Route path="/dashboard/finance" element={user ? <Finance /> : <Navigate to="/login" replace />} />
       
       <Route path="/" element={<Navigate to={user ? '/dashboard' : '/login'} replace />} />
       <Route path="*" element={<Navigate to={user ? '/dashboard' : '/login'} replace />} />
