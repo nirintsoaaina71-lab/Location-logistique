@@ -1,137 +1,128 @@
 import DashboardLayout from '../components/DashboardLayout';
 import {
-  ShoppingCart,
-  Package,
-  Users,
   TrendingUp,
   ArrowUpRight,
   ArrowDownRight,
   DollarSign,
-  Pill,
-  AlertCircle,
+  ShoppingCart,
+  AlertTriangle,
+  Users,
   Clock,
   CheckCircle,
+  Package,
+  Activity,
+  Eye,
 } from 'lucide-react';
 
 interface StatCard {
   title: string;
   value: string;
-  change: string;
-  changeType: 'positive' | 'negative';
+  subtitle?: string;
+  change?: string;
+  changeType?: 'positive' | 'negative';
   icon: React.ElementType;
   color: string;
+  alert?: boolean;
 }
 
 const stats: StatCard[] = [
   {
-    title: 'Ventes du jour',
-    value: '1 245 €',
-    change: '+12.5%',
+    title: 'REVENUS',
+    value: '$12,840.00',
+    subtitle: '+4,2% par rapport à hier',
     changeType: 'positive',
     icon: DollarSign,
-    color: 'bg-success/10 text-success',
+    color: 'text-[#1e3a5f]',
   },
   {
-    title: 'Commandes',
-    value: '48',
-    change: '+8.2%',
-    changeType: 'positive',
+    title: 'VENTES',
+    value: '142',
+    subtitle: 'Moy. 12 par heure',
     icon: ShoppingCart,
-    color: 'bg-primary/10 text-primary',
+    color: 'text-[#1e3a5f]',
   },
   {
-    title: 'Médicaments en stock',
-    value: '356',
-    change: '-2.4%',
+    title: 'ALERTE',
+    value: '03',
+    subtitle: 'Nécessite une action immédiate',
     changeType: 'negative',
-    icon: Package,
-    color: 'bg-info/10 text-info',
+    icon: AlertTriangle,
+    color: 'text-[#dc2626]',
+    alert: true,
   },
   {
-    title: 'Clients actifs',
-    value: '189',
-    change: '+5.1%',
+    title: 'NOUVEAUX PATIENTS',
+    value: '18',
+    subtitle: '+12% par rapport au mois dernier',
     changeType: 'positive',
     icon: Users,
-    color: 'bg-warning/10 text-warning',
+    color: 'text-[#1e3a5f]',
   },
 ];
 
 interface RecentOrder {
   id: string;
-  customer: string;
-  product: string;
+  patient: string;
+  medication: string;
+  status: 'completed' | 'pending' | 'processing';
   amount: string;
-  status: 'completed' | 'pending' | 'cancelled';
-  date: string;
 }
 
 const recentOrders: RecentOrder[] = [
   {
-    id: 'CMD-001',
-    customer: 'Pharmacie Centrale',
-    product: 'Paracétamol 1000mg',
-    amount: '245.00 €',
+    id: '#ORD-9421',
+    patient: 'Eleanor Shellstrop',
+    medication: 'Atorvastatin 20mg',
     status: 'completed',
-    date: '2024-01-15',
+    amount: '$42.50',
   },
   {
-    id: 'CMD-002',
-    customer: 'Dr. Martin',
-    product: 'Amoxicilline 500mg',
-    amount: '189.99 €',
+    id: '#ORD-9420',
+    patient: 'Tahani Al-Jamil',
+    medication: 'Lisinopril 10mg',
     status: 'pending',
-    date: '2024-01-14',
+    amount: '$18.20',
   },
   {
-    id: 'CMD-003',
-    customer: 'Clinique du Parc',
-    product: 'Ibuprofène 400mg',
-    amount: '125.00 €',
+    id: '#ORD-9419',
+    patient: 'Chidi Anagonye',
+    medication: 'Metformin 500mg',
+    status: 'processing',
+    amount: '$25.00',
+  },
+  {
+    id: '#ORD-9418',
+    patient: 'Jason Mendoza',
+    medication: 'Amoxicilline 250mg',
     status: 'completed',
-    date: '2024-01-14',
-  },
-  {
-    id: 'CMD-004',
-    customer: 'Pharmacie Moreau',
-    product: 'Aspirine 500mg',
-    amount: '89.00 €',
-    status: 'cancelled',
-    date: '2024-01-13',
-  },
-  {
-    id: 'CMD-005',
-    customer: 'Cabinet Laurent',
-    product: 'Oméprazole 20mg',
-    amount: '156.50 €',
-    status: 'completed',
-    date: '2024-01-12',
+    amount: '$12.45',
   },
 ];
 
 const statusLabels = {
-  completed: 'Livré',
-  pending: 'En cours',
-  cancelled: 'Annulé',
+  completed: 'TERMINÉE',
+  pending: 'EN ATTENTE',
+  processing: 'EN COURS',
 };
 
 const statusClasses = {
-  completed: 'bg-success/10 text-success',
-  pending: 'bg-warning/10 text-warning',
-  cancelled: 'bg-danger/10 text-danger',
+  completed: 'bg-[#dcfce7] text-[#16a34a]',
+  pending: 'bg-[#ffedd5] text-[#ea580c]',
+  processing: 'bg-[#dbeafe] text-[#2563eb]',
 };
 
-interface LowStockItem {
+interface CriticalStockItem {
   name: string;
   stock: number;
-  minStock: number;
+  maxStock: number;
+  color: string;
 }
 
-const lowStockItems: LowStockItem[] = [
-  { name: 'Paracétamol 1000mg', stock: 12, minStock: 50 },
-  { name: 'Amoxicilline 500mg', stock: 8, minStock: 30 },
-  { name: 'Ibuprofène 400mg', stock: 15, minStock: 40 },
-  { name: 'Aspirine 500mg', stock: 5, minStock: 25 },
+const criticalStockItems: CriticalStockItem[] = [
+  { name: 'Amoxicilline 500mg', stock: 12, maxStock: 100, color: 'bg-[#dc2626]' },
+  { name: 'Insuline Glargine', stock: 5, maxStock: 50, color: 'bg-[#dc2626]' },
+  { name: 'Gabapentine 300mg', stock: 24, maxStock: 100, color: 'bg-[#4a6670]' },
+  { name: 'Lévothyroxine 50mcg', stock: 42, maxStock: 100, color: 'bg-[#4a6670]' },
 ];
 
 export default function Dashboard() {
@@ -141,209 +132,170 @@ export default function Dashboard() {
         {/* Page title */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-text-primary">Tableau de bord</h1>
-            <p className="text-text-secondary mt-1">Bienvenue sur votre gestion de pharmacie</p>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-text-muted">
-            <Clock size={16} />
-            <span>Dernière mise à jour: il y a 5 min</span>
+            <h1 className="text-2xl font-semibold text-[#1e3a5f]">Vue d'ensemble quotidienne</h1>
+            <p className="text-[#4b5563] text-sm mt-0.5">Résumé clinique et opérationnel en temps réel du 24 octobre 2023</p>
           </div>
         </div>
 
         {/* Stats grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((stat) => {
-            const Icon = stat.icon;
-            return (
-              <div
-                key={stat.title}
-                className="bg-surface border border-border rounded-xl p-5 hover:shadow-lg transition-shadow"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${stat.color}`}>
-                    <Icon size={20} />
-                  </div>
-                  <div
-                    className={`flex items-center gap-1 text-sm font-medium ${
-                      stat.changeType === 'positive' ? 'text-success' : 'text-danger'
-                    }`}
-                  >
-                    {stat.changeType === 'positive' ? (
-                      <ArrowUpRight size={14} />
-                    ) : (
-                      <ArrowDownRight size={14} />
-                    )}
-                    {stat.change}
-                  </div>
+        <div className="bg-white border border-[#d1d5db] rounded-lg p-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[#d1d5db]">
+            {stats.map((stat, index) => {
+              const Icon = stat.icon;
+              return (
+                <div
+                  key={stat.title}
+                  className={`px-4 ${index === 0 ? 'sm:pl-0' : ''} ${index === 3 ? 'sm:pr-0' : ''} py-3 sm:py-0`}
+                >
+                  <p className="text-xs text-[#4b5563] uppercase tracking-wider mb-1">{stat.title}</p>
+                  <p className={`text-3xl font-semibold ${stat.color}`}>{stat.value}</p>
+                  {stat.subtitle && (
+                    <div className="flex items-center gap-1 mt-1">
+                      {stat.alert ? (
+                        <AlertTriangle size={12} className="text-[#dc2626]" />
+                      ) : stat.changeType === 'positive' ? (
+                        <ArrowUpRight size={12} className="text-[#16a34a]" />
+                      ) : null}
+                      <span className={`text-xs ${stat.alert ? 'text-[#dc2626]' : stat.changeType === 'positive' ? 'text-[#16a34a]' : 'text-[#4b5563]'}`}>
+                        {stat.subtitle}
+                      </span>
+                    </div>
+                  )}
                 </div>
-                <p className="text-2xl font-bold text-text-primary">{stat.value}</p>
-                <p className="text-sm text-text-secondary mt-1">{stat.title}</p>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
 
-        {/* Charts and alerts */}
+        {/* Main content grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Revenue chart */}
-          <div className="lg:col-span-2 bg-surface border border-border rounded-xl p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-text-primary">Revenus mensuels</h2>
-              <div className="flex items-center gap-2 text-sm text-text-secondary">
-                <TrendingUp size={16} />
-                <span>Ce mois</span>
-              </div>
+          {/* Recent Orders */}
+          <div className="lg:col-span-2 bg-white border border-[#d1d5db] rounded-lg overflow-hidden">
+            <div className="p-5 border-b border-[#d1d5db] flex items-center justify-between">
+              <h2 className="text-base font-semibold text-[#1e3a5f]">Commandes récentes</h2>
+              <button className="text-sm text-[#4a6670] hover:underline flex items-center gap-1">
+                Voir tout <Eye size={14} />
+              </button>
             </div>
-            <div className="h-64 flex items-end justify-around gap-2 px-4">
-              {[65, 45, 75, 55, 80, 60, 70, 85, 50, 90, 75, 95].map((height, i) => (
-                <div
-                  key={i}
-                  className="flex-1 bg-primary/20 hover:bg-primary/40 rounded-t transition-colors cursor-pointer"
-                  style={{ height: `${height}%` }}
-                  title={`Mois ${i + 1}: ${height}%`}
-                />
-              ))}
-            </div>
-            <div className="flex justify-between mt-2 text-xs text-text-muted px-4">
-              <span>Jan</span>
-              <span>Fév</span>
-              <span>Mar</span>
-              <span>Avr</span>
-              <span>Mai</span>
-              <span>Jun</span>
-              <span>Jul</span>
-              <span>Aoû</span>
-              <span>Sep</span>
-              <span>Oct</span>
-              <span>Nov</span>
-              <span>Déc</span>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[600px]">
+                <thead>
+                  <tr className="bg-[#f8f9fa]">
+                    <th className="text-left text-xs font-medium text-[#4b5563] uppercase tracking-wider px-5 py-3">
+                      N° commande
+                    </th>
+                    <th className="text-left text-xs font-medium text-[#4b5563] uppercase tracking-wider px-5 py-3">
+                      Patient
+                    </th>
+                    <th className="text-left text-xs font-medium text-[#4b5563] uppercase tracking-wider px-5 py-3">
+                      Médicament
+                    </th>
+                    <th className="text-left text-xs font-medium text-[#4b5563] uppercase tracking-wider px-5 py-3">
+                      Statut
+                    </th>
+                    <th className="text-left text-xs font-medium text-[#4b5563] uppercase tracking-wider px-5 py-3">
+                      Montant
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#d1d5db]">
+                  {recentOrders.map((order) => (
+                    <tr key={order.id} className="hover:bg-[#f8f9fa]/50 transition-colors">
+                      <td className="px-5 py-4 text-sm font-medium text-[#1e3a5f]">
+                        {order.id}
+                      </td>
+                      <td className="px-5 py-4 text-sm text-[#4b5563]">
+                        {order.patient}
+                      </td>
+                      <td className="px-5 py-4 text-sm text-[#4b5563]">
+                        {order.medication}
+                      </td>
+                      <td className="px-5 py-4">
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            statusClasses[order.status]
+                          }`}
+                        >
+                          {statusLabels[order.status]}
+                        </span>
+                      </td>
+                      <td className="px-5 py-4 text-sm font-medium text-[#1e3a5f]">
+                        {order.amount}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
 
-          {/* Low stock alerts */}
-          <div className="bg-surface border border-border rounded-xl p-5">
-            <div className="flex items-center gap-2 mb-4">
-              <AlertCircle size={20} className="text-danger" />
-              <h2 className="text-lg font-semibold text-text-primary">Stock faible</h2>
+          {/* Critical Stock */}
+          <div className="bg-white border border-[#d1d5db] rounded-lg overflow-hidden">
+            <div className="p-5 border-b border-[#d1d5db] flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Package size={18} className="text-[#dc2626]" />
+                <h2 className="text-base font-semibold text-[#dc2626]">Stock critique</h2>
+              </div>
+              <span className="bg-[#dc2626] text-white text-xs px-2 py-0.5 rounded-full">Faible</span>
             </div>
-            <div className="space-y-3">
-              {lowStockItems.map((item, index) => (
-                <div key={index} className="p-3 bg-surface-hover rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-text-primary truncate">{item.name}</span>
-                    <span className="text-xs text-danger font-bold">{item.stock} restants</span>
+            <div className="p-5 space-y-4">
+              {criticalStockItems.map((item, index) => (
+                <div key={index}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-sm font-medium text-[#1e3a5f]">{item.name}</span>
+                    <span className="text-xs text-[#dc2626] font-medium">{item.stock} unités restantes</span>
                   </div>
-                  <div className="w-full bg-border rounded-full h-1.5">
+                  <div className="w-full bg-[#e5e7eb] rounded-full h-1.5">
                     <div
-                      className="bg-danger h-1.5 rounded-full"
-                      style={{ width: `${(item.stock / item.minStock) * 100}%` }}
+                      className={`${item.color} h-1.5 rounded-full`}
+                      style={{ width: `${(item.stock / item.maxStock) * 100}%` }}
                     ></div>
                   </div>
-                  <p className="text-xs text-text-muted mt-1">Minimum: {item.minStock}</p>
                 </div>
               ))}
+              <button className="w-full mt-4 py-2.5 bg-[#4a6670] text-white rounded text-sm font-medium hover:bg-[#3d5660] transition-colors">
+                RECOMMANDER TOUT LE STOCK CRITIQUE
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Quick stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-surface border border-border rounded-xl p-5">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
-                <CheckCircle size={20} className="text-success" />
+        {/* Bottom section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Pharmacist Availability */}
+          <div className="bg-white border border-[#d1d5db] rounded-lg p-5">
+            <h2 className="text-base font-semibold text-[#1e3a5f] mb-4">Disponibilité des pharmaciens</h2>
+            <div className="flex items-center gap-4">
+              <div className="flex -space-x-2">
+                <div className="w-10 h-10 bg-[#4a6670] rounded-full border-2 border-white flex items-center justify-center">
+                  <span className="text-white text-xs">👨‍⚕️</span>
+                </div>
+                <div className="w-10 h-10 bg-[#5a7d8a] rounded-full border-2 border-white flex items-center justify-center">
+                  <span className="text-white text-xs">👩‍⚕️</span>
+                </div>
+                <div className="w-10 h-10 bg-[#6b9aaa] rounded-full border-2 border-white flex items-center justify-center">
+                  <span className="text-white text-xs">👨‍⚕️</span>
+                </div>
               </div>
               <div>
-                <p className="text-sm text-text-secondary">Commandes livrées</p>
-                <p className="text-xl font-bold text-text-primary">156</p>
+                <p className="text-sm text-[#4b5563]">3 en service • 2 en pause</p>
               </div>
             </div>
           </div>
-          <div className="bg-surface border border-border rounded-xl p-5">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-warning/10 rounded-lg flex items-center justify-center">
-                <Clock size={20} className="text-warning" />
-              </div>
-              <div>
-                <p className="text-sm text-text-secondary">En attente</p>
-                <p className="text-xl font-bold text-text-primary">23</p>
-              </div>
-            </div>
-          </div>
-          <div className="bg-surface border border-border rounded-xl p-5">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                <Pill size={20} className="text-primary" />
-              </div>
-              <div>
-                <p className="text-sm text-text-secondary">Nouveaux médicaments</p>
-                <p className="text-xl font-bold text-text-primary">8</p>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        {/* Recent orders table */}
-        <div className="bg-surface border border-border rounded-xl overflow-hidden">
-          <div className="p-5 border-b border-border flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-text-primary">Commandes récentes</h2>
-            <button className="text-sm text-primary hover:underline">Voir tout</button>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-surface-hover">
-                  <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-5 py-3">
-                    Commande
-                  </th>
-                  <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-5 py-3">
-                    Client
-                  </th>
-                  <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-5 py-3 hidden md:table-cell">
-                    Médicament
-                  </th>
-                  <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-5 py-3">
-                    Montant
-                  </th>
-                  <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-5 py-3">
-                    Statut
-                  </th>
-                  <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-5 py-3 hidden lg:table-cell">
-                    Date
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {recentOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-surface-hover/50 transition-colors">
-                    <td className="px-5 py-4 text-sm font-medium text-text-primary">
-                      {order.id}
-                    </td>
-                    <td className="px-5 py-4 text-sm text-text-secondary">
-                      {order.customer}
-                    </td>
-                    <td className="px-5 py-4 text-sm text-text-secondary hidden md:table-cell">
-                      {order.product}
-                    </td>
-                    <td className="px-5 py-4 text-sm font-medium text-text-primary">
-                      {order.amount}
-                    </td>
-                    <td className="px-5 py-4">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          statusClasses[order.status]
-                        }`}
-                      >
-                        {statusLabels[order.status]}
-                      </span>
-                    </td>
-                    <td className="px-5 py-4 text-sm text-text-secondary hidden lg:table-cell">
-                      {order.date}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {/* System Efficiency */}
+          <div className="bg-[#4a6670] rounded-lg p-5 text-white">
+            <h2 className="text-base font-semibold mb-1">Efficacité du système</h2>
+            <p className="text-sm text-white/80 mb-4">Le temps de traitement des ordonnances est actuellement 15% plus rapide que la moyenne.</p>
+            <div className="flex items-end justify-between">
+              <div className="flex items-end gap-1 h-16">
+                <div className="w-3 bg-white/30 rounded-t" style={{ height: '40%' }}></div>
+                <div className="w-3 bg-white/30 rounded-t" style={{ height: '60%' }}></div>
+                <div className="w-3 bg-white/30 rounded-t" style={{ height: '45%' }}></div>
+                <div className="w-3 bg-white rounded-t" style={{ height: '85%' }}></div>
+              </div>
+              <span className="text-3xl font-semibold">98,2%</span>
+            </div>
           </div>
         </div>
       </div>

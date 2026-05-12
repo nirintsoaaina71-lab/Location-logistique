@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Mail } from 'lucide-react';
+import { Mail, ArrowLeft, BriefcaseMedical } from 'lucide-react';
 import { z } from 'zod';
 import api from '../service/api';
 
@@ -46,70 +46,101 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-[40px] p-8 shadow-[0_30px_30px_-20px_rgba(16,137,211,0.5)] border-4 border-white">
-        <h1 className="text-center font-black text-3xl text-[#1089d3] mb-8">
-          Mot de passe oublié
-        </h1>
+    <div className="min-h-screen bg-[#f5f7f8] flex items-center justify-center p-4 transition-colors duration-300">
+      <div className="w-full max-w-[420px]">
+        {/* Logo and Title */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 mb-2">
+            <BriefcaseMedical size={28} className="text-[#4a6670]" />
+            <h1 className="text-2xl font-semibold text-[#1e3a5f]">
+              PharmaSync Pro
+            </h1>
+          </div>
+          <p className="text-[#4b5563] text-xs tracking-widest uppercase">
+            Précision clinique
+          </p>
+        </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-          <div className="space-y-2">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="email"
-                {...register('email')}
-                placeholder="E-mail"
-                className={`w-full bg-white pl-12 pr-4 py-4 rounded-2xl 
-                         border-2 transition-all duration-200
-                         focus:outline-none focus:border-[#12B1D1]
-                         text-gray-900 placeholder-gray-400
-                         shadow-[0_10px_10px_-5px_#cff0ff]
-                         ${errors.email ? 'border-red-300' : 'border-transparent'}`}
-                disabled={isLoading}
-              />
+        {/* Card */}
+        <div className="bg-white rounded-lg border border-[#d1d5db] shadow-sm p-8">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-[#4a6670]/10 rounded-xl mb-4">
+              <Mail size={28} className="text-[#4a6670]" />
             </div>
-            {errors.email && (
-              <p className="text-red-500 text-xs ml-2">{errors.email.message}</p>
-            )}
+            <h2 className="text-xl font-semibold text-[#1e3a5f] mb-1">
+              Mot de passe oublié
+            </h2>
+            <p className="text-[#4b5563] text-sm">
+              Entrez votre email pour recevoir un lien de réinitialisation
+            </p>
           </div>
 
-          {errors.root && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
-              {errors.root.message}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-[#1e3a5f]">
+                Adresse email
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                  <Mail className="h-4.5 w-4.5 text-[#9ca3af]" />
+                </div>
+                <input
+                  type="email"
+                  {...register('email')}
+                  placeholder="pharmacien@pharmasync.pro"
+                  className={`w-full bg-[#f8f9fa] pl-11 pr-4 py-2.5 rounded border 
+                           transition-all duration-200
+                           focus:outline-none focus:ring-1 focus:ring-[#4a6670]/30 focus:border-[#4a6670]
+                           text-[#1e3a5f] placeholder-[#9ca3af] text-sm
+                           ${errors.email ? 'border-[#dc2626]' : 'border-[#d1d5db]'}`}
+                  disabled={isLoading}
+                />
+              </div>
+              {errors.email && (
+                <p className="text-[#dc2626] text-xs ml-1">{errors.email.message}</p>
+              )}
             </div>
-          )}
 
-          {successMessage && (
-            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm">
-              {successMessage}
-            </div>
-          )}
+            {errors.root && (
+              <div className="bg-[#dc2626]/10 border border-[#dc2626]/20 text-[#dc2626] px-4 py-3 rounded text-sm">
+                {errors.root.message}
+              </div>
+            )}
 
-          <button
-            type="submit"
-            disabled={isLoading || isSubmitting}
-            className="w-full font-bold bg-gradient-to-r from-[#1089d3] to-[#12B1D1] 
-                     text-white py-4 rounded-2xl shadow-[0_20px_10px_-15px_rgba(16,137,211,0.5)]
-                     hover:shadow-[0_23px_10px_-20px_rgba(16,137,211,0.5)] 
-                     hover:scale-[1.02] active:scale-[0.98] 
-                     transition-all duration-200
-                     disabled:opacity-50 disabled:cursor-not-allowed 
-                     disabled:hover:scale-100 disabled:active:scale-100"
-          >
-            {isLoading ? 'Envoi...' : 'Envoyer le lien'}
-          </button>
+            {successMessage && (
+              <div className="bg-[#dcfce7] border border-[#16a34a]/20 text-[#16a34a] px-4 py-3 rounded text-sm">
+                {successMessage}
+              </div>
+            )}
 
-          <p className="text-center text-sm text-gray-600 mt-4">
-            <Link to="/login" className="text-[#0099ff] hover:underline font-medium">
-              Retour à la connexion
-            </Link>
-          </p>
-        </form>
+            <button
+              type="submit"
+              disabled={isLoading || isSubmitting}
+              className="w-full font-medium bg-[#4a6670] 
+                       text-white py-2.5 rounded shadow-sm
+                       hover:bg-[#3d5660] hover:shadow active:scale-[0.99] 
+                       transition-all duration-200
+                       disabled:opacity-50 disabled:cursor-not-allowed 
+                       disabled:hover:scale-100 disabled:active:scale-100
+                       text-sm"
+            >
+              {isLoading ? 'Envoi...' : 'Envoyer le lien'}
+            </button>
+
+            <p className="text-center text-sm text-[#4b5563]">
+              <Link to="/login" className="text-[#4a6670] hover:underline font-medium inline-flex items-center gap-1">
+                <ArrowLeft size={14} />
+                Retour à la connexion
+              </Link>
+            </p>
+          </form>
+        </div>
+
+        {/* Copyright */}
+        <p className="text-center text-xs text-[#9ca3af] mt-6">
+          © 2024 PharmaSync Pro. Tous droits réservés.
+        </p>
       </div>
     </div>
   );
 }
-

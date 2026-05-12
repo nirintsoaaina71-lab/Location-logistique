@@ -1,60 +1,60 @@
 @import "tailwindcss";
 
 @theme {
-  /* Light theme (default) */
-  --color-primary: #0ea5e9;
-  --color-primary-hover: #0284c7;
-  --color-primary-light: #e0f2fe;
-  --color-secondary: #64748b;
-  --color-success: #10b981;
-  --color-success-light: #d1fae5;
-  --color-danger: #ef4444;
-  --color-danger-light: #fee2e2;
-  --color-warning: #f59e0b;
-  --color-warning-light: #fef3c7;
+  /* Light theme (default) - PharmaSync Pro Clinical Design */
+  --color-primary: #4a6670;
+  --color-primary-hover: #3d5660;
+  --color-primary-light: #d4e6f5;
+  --color-secondary: #6b7280;
+  --color-success: #22c55e;
+  --color-success-light: #f0fdf4;
+  --color-danger: #dc2626;
+  --color-danger-light: #fef2f2;
+  --color-warning: #ea580c;
+  --color-warning-light: #fff7ed;
   --color-info: #3b82f6;
-  --color-info-light: #dbeafe;
+  --color-info-light: #eff6ff;
   
-  /* Background colors */
-  --color-background: #f0f9ff;
+  /* Background colors - Clean clinical whites */
+  --color-background: #f5f7f8;
   --color-surface: #ffffff;
-  --color-surface-hover: #f8fafc;
+  --color-surface-hover: #f8f9fa;
   --color-surface-elevated: #ffffff;
   
-  /* Border colors */
-  --color-border: #e2e8f0;
-  --color-border-light: #f1f5f9;
+  /* Border colors - Subtle clinical */
+  --color-border: #d1d5db;
+  --color-border-light: #e5e7eb;
   
   /* Text colors */
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #475569;
-  --color-text-muted: #94a3b8;
+  --color-text-primary: #000000;
+  --color-text-secondary: #000000;
+  --color-text-muted: #666666;
   --color-text-inverse: #ffffff;
   
-  /* Medical theme */
-  --color-medical-primary: #0ea5e9;
-  --color-medical-secondary: #06b6d4;
-  --color-medical-accent: #14b8a6;
+  /* Medical theme - Clinical colors */
+  --color-medical-primary: #4a6670;
+  --color-medical-secondary: #5a7d8a;
+  --color-medical-accent: #6b9aaa;
   --color-medical-success: #22c55e;
-  --color-medical-warning: #f97316;
-  --color-medical-danger: #ef4444;
+  --color-medical-warning: #ea580c;
+  --color-medical-danger: #dc2626;
   
   --font-family-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Dark theme */
+/* Dark theme - Clean dark design */
 .dark {
-  --color-primary: #38bdf8;
-  --color-primary-hover: #0ea5e9;
-  --color-primary-light: #0c4a6e;
-  --color-success: #34d399;
-  --color-success-light: #064e3b;
+  --color-primary: #5a8a9a;
+  --color-primary-hover: #4a7a8a;
+  --color-primary-light: #1a2d35;
+  --color-success: #4ade80;
+  --color-success-light: #052e16;
   --color-danger: #f87171;
-  --color-danger-light: #7f1d1d;
+  --color-danger-light: #450a0a;
   --color-warning: #fbbf24;
-  --color-warning-light: #78350f;
+  --color-warning-light: #451a03;
   --color-info: #60a5fa;
-  --color-info-light: #1e3a8a;
+  --color-info-light: #172554;
   
   --color-background: #0f172a;
   --color-surface: #1e293b;
@@ -91,6 +91,18 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]), 
+  select, 
+  textarea {
+    color: #000000 !important;
+  }
+
+  .dark input:not([type="checkbox"]):not([type="radio"]), 
+  .dark select, 
+  .dark textarea {
+    color: #0b192e !important;
   }
 }
 
