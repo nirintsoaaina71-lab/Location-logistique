@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
-import { Search, Eye, Mail, Phone, MapPin, Calendar, ShoppingCart, DollarSign, User, Pill, FileText, Download, Filter, ChevronDown, TrendingUp, TrendingDown, Package } from 'lucide-react';
+import { Search, Eye, Mail, Phone, MapPin, Calendar, ShoppingCart, DollarSign, User, Pill, FileText } from 'lucide-react';
 
 interface Client {
   id: string;

@@ -1,16 +1,11 @@
 import DashboardLayout from '../components/DashboardLayout';
 import {
-  TrendingUp,
   ArrowUpRight,
-  ArrowDownRight,
   DollarSign,
   ShoppingCart,
   AlertTriangle,
   Users,
-  Clock,
-  CheckCircle,
   Package,
-  Activity,
   Eye,
 } from 'lucide-react';
 
@@ -141,7 +136,6 @@ export default function Dashboard() {
         <div className="bg-white border border-[#d1d5db] rounded-lg p-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[#d1d5db]">
             {stats.map((stat, index) => {
-              const Icon = stat.icon;
               return (
                 <div
                   key={stat.title}
