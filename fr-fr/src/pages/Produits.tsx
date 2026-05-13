@@ -61,7 +61,6 @@ const stockFilters = [
 export default function Produits() {
   const { medicaments, loading, error, fetchMedicaments, addMedicament: addMedicamentApi, updateMedicament: updateMedicamentApi, deleteMedicament: deleteMedicamentApi } = useMedicament();
   const [categories, setCategories] = useState<CategorieType[]>([]);
-  const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('Toutes catégories');
   const [stockFilter, setStockFilter] = useState('all');
@@ -73,7 +72,6 @@ export default function Produits() {
   
   useEffect(() => {
     const loadCategories = async () => {
-      setCategoriesLoading(true);
       try {
         const response = await getCategories();
         const data = response.data;
@@ -101,7 +99,6 @@ export default function Produits() {
       } catch (err) {
         console.error('[Produits] Erreur lors du chargement des catégories:', err);
       } finally {
-        setCategoriesLoading(false);
       }
     };
     loadCategories();
