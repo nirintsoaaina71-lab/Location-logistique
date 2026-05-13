@@ -7,42 +7,22 @@ import { errorResponseSchema } from '../schemas/auth.schemas';
  * Détecte l'environnement en fonction de l'URL actuelle du navigateur
  * C'est la méthode la plus fiable car elle ne dépend pas de Vercel
  */
-const getEnvironment = (): 'preview' | 'production' | 'development' => {
+const getApiUrl = () => {
+  // 1. Propritété aux variables d'environnement explicites
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+
   const hostname = window.location.hostname;
   
-  // Preview Vercel : contient toujours 'git-' ou 'vercel.app' avec sous-domaine
-  if (hostname.includes('git-') || (hostname.includes('vercel.app') && hostname !== 'location-logistique.vercel.app')) {
-    return 'preview';
+  // 2. Développement local
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return import.meta.env.VITE_API_URL_DEV || 'http://localhost:3001';
   }
   
-  // Production (domaine personnalisé ou vercel.app principal)
-  if (hostname === 'location-logistique.vercel.app' || hostname === 'location-logistique.com') {
-    return 'production';
-  }
-  
-  // Développement local
-  return 'development';
-};
-
-const getApiUrl = () => {
-  const env = getEnvironment();
-  
-  console.log(`[ENV] Environnement détecté: ${env}`);
-  
-  switch (env) {
-    case 'preview':
-      const stagingUrl = import.meta.env.VITE_API_URL_STAGING;
-      console.log(`✅ Preview - Backend: ${stagingUrl}`);
-      return stagingUrl;
-    case 'production':
-      const prodUrl = import.meta.env.VITE_API_URL_PROD;
-      console.log(`✅ Production - Backend: ${prodUrl}`);
-      return prodUrl;
-    case 'development':
-      const devUrl = import.meta.env.VITE_API_URL_DEV || 'http://localhost:3001';
-      console.log(`✅ Développement - Backend: ${devUrl}`);
-      return devUrl;
-  }
+  // 3. Environnement Vercel (Preview ou Production)
+  // On essaye de récupérer STAGING ou PROD, avec un fallback sur le backend Render connu
+  return import.meta.env.VITE_API_URL_STAGING || 
+         import.meta.env.VITE_API_URL_PROD || 
+         'https://location-logistique.onrender.com';
 };
 
 const API_BASE_URL = getApiUrl();
